@@ -21,7 +21,6 @@ import androidx.compose.ui.window.*
 
 fun main() = application {
     var dialogVisible by remember { mutableStateOf(true) }
-    val size = remember { mutableStateOf(DpSize(400.dp, 400.dp)) }
 
     Window(onCloseRequest = ::exitApplication) {
         Button(onClick = {
