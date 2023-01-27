@@ -12,8 +12,10 @@ kotlin {
     sourceSets {
         named("jvmMain") {
             dependencies {
+                implementation(compose.runtime)
+                implementation(compose.foundation)
+                implementation(compose.material)
                 implementation(compose.desktop.currentOs)
-                implementation(project(":common"))
             }
         }
     }
@@ -22,11 +24,5 @@ kotlin {
 compose.desktop {
     application {
         mainClass = "MainKt"
-
-        nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "KotlinMultiplatformComposeDesktopApplication"
-            packageVersion = "1.0.0"
-        }
     }
 }
