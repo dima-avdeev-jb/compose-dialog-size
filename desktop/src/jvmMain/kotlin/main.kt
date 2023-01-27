@@ -26,7 +26,8 @@ class MyDialogState(positionState: MutableState<WindowPosition>, sizeState: Muta
 
 fun main() = application {
     var dialogVisible by remember { mutableStateOf(true) }
-    var position by remember { mutableStateOf(DpOffset(200.dp, 200.dp)) }
+    val position = remember { mutableStateOf<WindowPosition>(WindowPosition(200.dp, 200.dp)) }
+    val size = remember { mutableStateOf(DpSize(400.dp, 400.dp)) }
 
     Window(onCloseRequest = ::exitApplication) {
         Button(onClick = {
@@ -34,9 +35,9 @@ fun main() = application {
         }) {
             Text("Open Dialog")
         }
-        key(position) {
-            val dialogState: DialogState =
-                rememberDialogState(WindowPosition(position.x, position.y), DpSize(400.dp, 400.dp))
+        key(position.value.x, position.value.y) {
+            val dialogState = MyDialogState(position, size)
+            println("position.value.x: ${position.value.x}")
             Dialog(
                 title = "Title",
                 onCloseRequest = { dialogVisible = false },
@@ -52,16 +53,16 @@ fun main() = application {
                 ) {
                     Box(Modifier.size(150.dp)) {
                         BtnIcon(Alignment.TopCenter, Icons.Default.KeyboardArrowUp) {
-                            position += DpOffset(0.dp, -10.dp)
+                            position.value += DpOffset(0.dp, -10.dp)
                         }
                         BtnIcon(Alignment.BottomCenter, Icons.Default.KeyboardArrowDown) {
-                            position += DpOffset(0.dp, 10.dp)
+                            position.value += DpOffset(0.dp, 10.dp)
                         }
                         BtnIcon(Alignment.CenterStart, Icons.Default.KeyboardArrowLeft) {
-                            position += DpOffset(-10.dp, 0.dp)
+                            position.value += DpOffset(-10.dp, 0.dp)
                         }
                         BtnIcon(Alignment.CenterEnd, Icons.Default.KeyboardArrowRight) {
-                            position += DpOffset(10.dp, 0.dp)
+                            position.value += DpOffset(10.dp, 0.dp)
                         }
                         Text("Move", Modifier.align(Alignment.Center))
                     }
@@ -85,6 +86,10 @@ fun main() = application {
             }
         }
     }
+}
+
+private operator fun WindowPosition.plus(dpOffset: DpOffset):WindowPosition {
+    return WindowPosition(x = x + dpOffset.x, y = y + dpOffset.y)
 }
 
 @Composable
