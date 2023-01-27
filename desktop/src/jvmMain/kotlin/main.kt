@@ -19,14 +19,8 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 
-class MyDialogState(positionState: MutableState<WindowPosition>, sizeState: MutableState<DpSize>) : DialogState {
-    override var position: WindowPosition by positionState
-    override var size: DpSize by sizeState
-}
-
 fun main() = application {
     var dialogVisible by remember { mutableStateOf(true) }
-    val position = remember { mutableStateOf<WindowPosition>(WindowPosition(200.dp, 200.dp)) }
     val size = remember { mutableStateOf(DpSize(400.dp, 400.dp)) }
 
     Window(onCloseRequest = ::exitApplication) {
@@ -35,53 +29,36 @@ fun main() = application {
         }) {
             Text("Open Dialog")
         }
-        key(position.value.x, position.value.y) {
-            val dialogState = MyDialogState(position, size)
-            println("position.value.x: ${position.value.x}")
-            Dialog(
-                title = "Title",
-                onCloseRequest = { dialogVisible = false },
-                state = dialogState,
-                focusable = true,
-                visible = dialogVisible,
+        val dialogState = rememberDialogState(position = WindowPosition(0.dp, 0.dp), size = DpSize(400.dp, 400.dp))
+        Dialog(
+            title = "Title",
+            onCloseRequest = { dialogVisible = false },
+            state = dialogState,
+            focusable = true,
+            visible = dialogVisible,
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(dialogState.size)
+                    .border(1.dp, Color.Red),
+                contentAlignment = Alignment.Center,
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(dialogState.size)
-                        .border(1.dp, Color.Red),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Box(Modifier.size(150.dp)) {
-                        BtnIcon(Alignment.TopCenter, Icons.Default.KeyboardArrowUp) {
-                            position.value += DpOffset(0.dp, -10.dp)
-                        }
-                        BtnIcon(Alignment.BottomCenter, Icons.Default.KeyboardArrowDown) {
-                            position.value += DpOffset(0.dp, 10.dp)
-                        }
-                        BtnIcon(Alignment.CenterStart, Icons.Default.KeyboardArrowLeft) {
-                            position.value += DpOffset(-10.dp, 0.dp)
-                        }
-                        BtnIcon(Alignment.CenterEnd, Icons.Default.KeyboardArrowRight) {
-                            position.value += DpOffset(10.dp, 0.dp)
-                        }
-                        Text("Move", Modifier.align(Alignment.Center))
-                    }
-                    Column(Modifier.align(Alignment.CenterEnd)) {
-                        Button({
-                            dialogState.size = dialogState.size.copy(width = dialogState.size.width + 10.dp)
-                        }) { Text("+") }
-                        Button({
-                            dialogState.size = dialogState.size.copy(width = dialogState.size.width - 10.dp)
-                        }) { Text("-") }
-                    }
-                    Row(Modifier.align(Alignment.BottomCenter)) {
-                        Button({
-                            dialogState.size = dialogState.size.copy(height = dialogState.size.height + 10.dp)
-                        }) { Text("+") }
-                        Button({
-                            dialogState.size = dialogState.size.copy(height = dialogState.size.height - 10.dp)
-                        }) { Text("-") }
-                    }
+
+                Column(Modifier.align(Alignment.CenterEnd)) {
+                    Button({
+                        dialogState.size += DpSize(10.dp, 0.dp)
+                    }) { Text("+") }
+                    Button({
+                        dialogState.size += DpSize(-10.dp, 0.dp)
+                    }) { Text("-") }
+                }
+                Row(Modifier.align(Alignment.BottomCenter)) {
+                    Button({
+                        dialogState.size += DpSize(0.dp, 10.dp)
+                    }) { Text("+") }
+                    Button({
+                        dialogState.size += DpSize(0.dp, -10.dp)
+                    }) { Text("-") }
                 }
             }
         }
