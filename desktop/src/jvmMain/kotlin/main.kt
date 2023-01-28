@@ -1,3 +1,4 @@
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
@@ -15,15 +16,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 
 fun main() = application {
-    var dialogVisible by remember { mutableStateOf(true) }
+    var dialogVisible by remember { mutableStateOf(false) }
+    var windowVisibility by remember { mutableStateOf(false) }
 
     Window(onCloseRequest = ::exitApplication) {
-        Button(onClick = {
-            dialogVisible = true
-        }) {
-            Text("Open Dialog")
+        Column {
+            Button(onClick = { dialogVisible = !dialogVisible }) {
+                Text(if (dialogVisible) "Close Dialog" else "Open Dialog")
+            }
+            Button(onClick = { windowVisibility = !windowVisibility }) {
+                Text(if (windowVisibility) "Close Window" else "Open Window")
+            }
         }
         val dialogState = rememberDialogState(position = WindowPosition(0.dp, 0.dp), size = DpSize.Unspecified)
+
         Dialog(
             title = "Title",
             onCloseRequest = { dialogVisible = false },
@@ -57,9 +63,20 @@ fun main() = application {
             }
         }
     }
+
+    Window(
+        onCloseRequest = { println("Window, onCloseRequest") },
+        state = rememberWindowState(size = DpSize.Unspecified, position = WindowPosition(400.dp, 400.dp)),
+        undecorated = true,
+        resizable = false,
+        visible = windowVisibility,
+        alwaysOnTop = true
+    ) {
+        Box(Modifier.size(300.dp).background(Color.Yellow))
+    }
 }
 
-private operator fun WindowPosition.plus(dpOffset: DpOffset):WindowPosition {
+private operator fun WindowPosition.plus(dpOffset: DpOffset): WindowPosition {
     return WindowPosition(x = x + dpOffset.x, y = y + dpOffset.y)
 }
 
