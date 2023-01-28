@@ -23,7 +23,7 @@ fun main() = application {
         }) {
             Text("Open Dialog")
         }
-        val dialogState = rememberDialogState(position = WindowPosition(0.dp, 0.dp), size = DpSize(400.dp, 400.dp))
+        val dialogState = rememberDialogState(position = WindowPosition(0.dp, 0.dp), size = DpSize.Unspecified)
         Dialog(
             title = "Title",
             onCloseRequest = { dialogVisible = false },
@@ -33,7 +33,7 @@ fun main() = application {
         ) {
             Box(
                 modifier = Modifier
-                    .size(dialogState.size)
+                    .size(600.dp)
                     .border(1.dp, Color.Red),
                 contentAlignment = Alignment.Center,
             ) {
